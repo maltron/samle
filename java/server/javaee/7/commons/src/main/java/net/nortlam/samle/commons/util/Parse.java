@@ -21,6 +21,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -29,27 +31,19 @@ public class Parse implements Serializable {
 
     private static final Logger LOG = Logger.getLogger(Parse.class.getName());
 
-    public static List<String> parse(String content, String startLooking, 
-                                        String endLooking, String[][] limits) {
-        int start = content.indexOf(startLooking); int end = 0;
+    public static List<String> parse(String content, String filter, String[] remove) {
         List<String> result = new ArrayList<String>();
-        while(start > 0) {
-            boolean found = false; boolean shouldend = false;
-            for(int i=0; i < limits.length; i++) {
-                start = content.indexOf(limits[i][0], start)+limits[i][0].length();
-                end = content.indexOf(limits[i][1], start);
-                found = (start > 0) && (end > 0);
-                
-                if(found) {
-                    String word = content.substring(start, end);
-                    System.out.printf(">>> WORD:%s\n",word);
-                    result.add(word);
-                    shouldend = word.equals(endLooking);
-                } else break;
-            }
+        Pattern pattern = Pattern.compile(filter);
+        Matcher matcher = pattern.matcher(content);
+        while(matcher.find()) {
+            String word = matcher.group();
+//            System.out.printf("### %s\n",word);
             
-            if(shouldend) break;
-            System.out.printf("Start:%d End:%d\n",start, end);
+            if(remove != null && remove.length > 0)
+                for(int i=0; i < remove.length; i++)
+                    word = word.replaceAll(remove[i], "");
+
+            result.add(word.trim());
         }
         
         return result;
