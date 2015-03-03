@@ -6,6 +6,7 @@
         <groupId>net.nortlam.samle</groupId>
         <artifactId>samle</artifactId>
         <version>2.0</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <groupId>net.nortlam.samle</groupId>
@@ -27,6 +28,7 @@
             <version>2.0</version>
             <scope>compile</scope>
         </dependency>
+        <!-- Used for Importing content from Web to the Database -->
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-client</artifactId>
@@ -39,6 +41,7 @@
             <version>3.0.10.Final</version>
             <scope>compile</scope>
         </dependency>
+
     </dependencies>
 
     <build>

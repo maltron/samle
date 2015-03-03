@@ -18,7 +18,6 @@
 package net.nortlam.samle.currency.tooling;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,9 +25,10 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
+import net.nortlam.samle.commons.util.Parse;
 
-import net.nortlam.porcupine.common.ssl.SSL;
-import net.nortlam.porcupine.common.ssl.SSLIgnoreCertificate;
+//import net.nortlam.porcupine.common.ssl.SSL;
+//import net.nortlam.porcupine.common.ssl.SSLIgnoreCertificate;
 /**
  *
  * @author Mauricio "Maltron" Leal */
@@ -36,8 +36,7 @@ public class Import implements Serializable {
 
     private static final Logger LOG = Logger.getLogger(Import.class.getName());
     
-    public static final String WEBSITE = "https://www.countries-ofthe-world.com/world-currencies.html";
-    public static final String START = "<td colspan=\"3\"><a class=\"letter\">A</a></td>";
+    public static final String WEBSITE = "http://en.wikipedia.org/wiki/List_of_circulating_currencies";
     
     public static void main(String[] args) {
         Import app = new Import();
@@ -46,8 +45,7 @@ public class Import implements Serializable {
     public Import() {
 
         ClientBuilder builder = ClientBuilder.newBuilder();
-        SSL ssl = new SSLIgnoreCertificate();
-        Client client = builder.sslContext(ssl.createContext()).build();
+        Client client = builder.newClient();
         WebTarget target = client.target(WEBSITE);
         Response response = null;
         LOG.log(Level.INFO, ">>> Start Connection");
@@ -55,35 +53,8 @@ public class Import implements Serializable {
             response = target.request().get(); int start, end;
             if(response.getStatus() == Response.Status.OK.getStatusCode()) {
                 String body = response.readEntity(String.class);
-//                System.out.printf("BODY: %s\n",body);
-                
-                List<String> result = parse(body, START, "ZWD", new String[][] {
-                    {"<td>", "</td>"}, {"<td>", "</td>"}, {"<tt>", "</tt>"}
-                });
-                for(String value: result)
-                    System.out.printf(">>> %s\n",value);
-                
-//                // PARSE PARSE PARSE PARSE PARSE PARSE PARSE PARSE PARSE PARSE 
-//                start = body.indexOf(START);
-//                while(start > 0) {
-//                    
-//                    start = body.indexOf("<td>", start)+"<td>".length(); if(start < 0) break;
-//                    end = body.indexOf("</td>", start); if(end < 0) break;
-//                    String country = body.substring(start, end);
-//                    
-//                    start = body.indexOf("<td>", start)+"<td>".length(); if(start < 0) break;
-//                    end = body.indexOf("</td>", start); if(end < 0) break;
-//                    String currency = body.substring(start, end);
-//                    
-//                    
-//                    start = body.indexOf("<tt>", start)+"<tt>".length(); if(start < 0) break;
-//                    end = body.indexOf("</tt>", start); if(end < 0) break;
-//                    String symbol = body.substring(start, end);
-//                    
-//                    System.out.printf("Country:%s Currency:%s Symbol:%s\n", country, currency, symbol);
-//                    
-//                    if(symbol.equals("ZWD")) break;
-//                }
+                List<String> result = Parse.parse(body, "<td(.*?)</td>", null);
+                for(String value: result) System.out.printf(">>>: %s\n", value);
             }
             
         } finally {
@@ -91,30 +62,5 @@ public class Import implements Serializable {
             if(response != null) response.close();
             client.close();
         }
-    }
-    
-    
-    public List<String> parse(String content, String startLooking, 
-                                        String endLooking, String[][] limits) {
-        int start = content.indexOf(startLooking); int end = 0;
-        List<String> result = new ArrayList<String>();
-        while(start > 0) {
-            boolean found = false; boolean shouldend = false;
-            for(int i=0; i < limits.length; i++) {
-                start = content.indexOf(limits[i][0], start)+limits[i][0].length();
-                end = content.indexOf(limits[i][1], start);
-                found = (start > 0) && (end > 0);
-                
-                if(found) {
-                    String word = content.substring(start, end);
-                    result.add(word);
-                    shouldend = word.equals(endLooking);
-                } else break;
-            }
-            
-            if(shouldend) break;
-        }
-        
-        return result;
     }
 }
