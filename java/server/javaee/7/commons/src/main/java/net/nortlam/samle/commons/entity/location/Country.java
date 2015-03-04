@@ -22,8 +22,6 @@ import java.util.Objects;
 import java.util.logging.Logger;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -43,21 +41,42 @@ public class Country implements Serializable {
 
     private static final Logger LOG = Logger.getLogger(Country.class.getName());
     
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="COUNTRY_ID")
+    @Id 
+    @Column(name="COUNTRY_ID", unique = true, nullable = false)
     @XmlAttribute(name="ID", required = false)
     private long ID;
     
-    public static final int LENGTH_NAME = 50;
+    public static final int LENGTH_NAME = 53;
     @Column(name="NAME", length = LENGTH_NAME, unique=true, nullable = false)
     @XmlElement(name="Name", type=String.class, required=true)
     private String name;
 
+    public static final int LENGTH_CODE2 = 2;
+    @Column(name="CODE2", columnDefinition = "CHAR(2)", length = LENGTH_CODE2, unique = true, nullable = false)
+    private String code2;
+    
+    public static final int LENGTH_CODE3 = 3;
+    @Column(name="CODE3", columnDefinition = "CHAR(3)", length = LENGTH_CODE3, unique = true, nullable = false)
+    private String code3;
+    
     public Country() {
     }
     
     public Country(String name) {
         this.name = name;
+    }
+
+    public Country(String name, String code2, String code3) {
+        this.name = name;
+        this.code2 = code2;
+        this.code3 = code3;
+    }
+
+    public Country(long ID, String name, String code2, String code3) {
+        this.ID = ID;
+        this.name = name;
+        this.code2 = code2;
+        this.code3 = code3;
     }
 
     public long getID() {
@@ -76,11 +95,29 @@ public class Country implements Serializable {
         this.name = name;
     }
 
+    public String getCode2() {
+        return code2;
+    }
+
+    public void setCode2(String code2) {
+        this.code2 = code2;
+    }
+
+    public String getCode3() {
+        return code3;
+    }
+
+    public void setCode3(String code3) {
+        this.code3 = code3;
+    }
+
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 73 * hash + (int) (this.ID ^ (this.ID >>> 32));
-        hash = 73 * hash + Objects.hashCode(this.name);
+        int hash = 7;
+        hash = 53 * hash + (int) (this.ID ^ (this.ID >>> 32));
+        hash = 53 * hash + Objects.hashCode(this.name);
+        hash = 53 * hash + Objects.hashCode(this.code2);
+        hash = 53 * hash + Objects.hashCode(this.code3);
         return hash;
     }
 
@@ -99,6 +136,12 @@ public class Country implements Serializable {
         if (!Objects.equals(this.name, other.name)) {
             return false;
         }
+        if (!Objects.equals(this.code2, other.code2)) {
+            return false;
+        }
+        if (!Objects.equals(this.code3, other.code3)) {
+            return false;
+        }
         return true;
     }
     
@@ -108,7 +151,10 @@ public class Country implements Serializable {
         buffer.append("<Country ID=\"").append(ID).append("\">");
         if(name != null)
             buffer.append("<Name>").append(name).append("</Name>");
-        
+        if(code2 != null) 
+            buffer.append("<Code2>").append(code2).append("</Code2>");
+        if(code3 != null)
+            buffer.append("<Code3>").append(code3).append("</Code3>");
         buffer.append("</Country>");
         
         return buffer.toString();

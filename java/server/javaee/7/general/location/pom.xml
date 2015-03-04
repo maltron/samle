@@ -28,20 +28,6 @@
             <version>2.0</version>
             <scope>compile</scope>
         </dependency>
-        <!-- Used for Importing content from Web to the Database -->
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-client</artifactId>
-            <version>3.0.10.Final</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-jackson-provider</artifactId>
-            <version>3.0.10.Final</version>
-            <scope>compile</scope>
-        </dependency>
-
     </dependencies>
 
     <build>

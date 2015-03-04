@@ -10,6 +10,7 @@
         <module>commons</module>
         <module>general/currency</module>
         <module>general/location</module>
+        <module>general/location/tooling/import</module>
     </modules>
     
     <properties>
