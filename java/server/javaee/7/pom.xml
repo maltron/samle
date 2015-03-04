@@ -11,6 +11,7 @@
         <module>general/currency</module>
         <module>general/location</module>
         <module>general/location/tooling/import</module>
+        <module>user/role</module>
     </modules>
     
     <properties>
